@@ -33,7 +33,7 @@ class AppFixtures extends Fixture
                 for ($j = 1; $j <= mt_rand(2, 5); $j++) {
                     $image = new Image();
 
-                    $image->setUrl($faker->sentence())
+                    $image->setUrl($faker->imageUrl())
                         ->setCaption($faker->sentence())
                         ->setAd($ad);
 
