@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Ad;
 use App\Repository\AdRepository;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -27,10 +28,8 @@ class AdController extends Controller
      * 
      * @return Response
      */
-    public function show(adRepository $repo, $slug) 
+    public function show(Ad $ad) 
     {
-        $ad = $repo->findOneBySlug($slug);
-
         return $this->render('ad/show.html.twig', [
             "ad" => $ad,
         ]);
