@@ -3,13 +3,18 @@
 namespace App\Entity;
 
 use Cocur\Slugify\Slugify;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\AdRepository")
  * @ORM\HasLifecycleCallbacks
+ * @UniqueEntity(
+ *  fields={"title"},
+ *  message="Une autre annonce possède deja ce titre, merçi de le modifier !")
  */
 class Ad
 {
@@ -22,6 +27,11 @@ class Ad
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Length(
+     * min=5,
+     * max=255,
+     * minMessage="Le titre doit faire plus de 5 caracteres !",
+     * maxMessage="Le titre ne peut pas dépasser 255 caracteres !")
      */
     private $title;
 
@@ -37,16 +47,24 @@ class Ad
 
     /**
      * @ORM\Column(type="text")
+     * @Assert\Length(
+     * min=20,
+     * minMessage="Votre introduction doit faire plus de 20 caracteres !")
      */
     private $introduction;
 
     /**
      * @ORM\Column(type="text")
+     * @Assert\Length(
+     * min=100,
+     * minMessage="Votre description doit faire plus de 100 caracteres !")
+     * 
      */
     private $content;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Url()
      */
     private $coverImage;
 
@@ -57,6 +75,7 @@ class Ad
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Image", mappedBy="ad", orphanRemoval=true)
+     * @Assert\Valid()
      */
     private $images;
 
@@ -67,12 +86,15 @@ class Ad
 
     /**
      * Initialize slugify
-     * 
+     *
      * @ORM\PrePersist
      * @ORM\PreUpdate
+     *
+     * @return void
      */
-    public function initializeSlug() {
-        if(empty($this->getSlug())) {
+    public function initializeSlug()
+    {
+        if (empty($this->slug)) {
             $slugify = new Slugify();
             $this->slug = $slugify->slugify($this->title);
         }
