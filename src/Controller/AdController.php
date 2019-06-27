@@ -6,10 +6,13 @@ use App\Entity\Ad;
 use App\Entity\Image;
 use App\Form\AnnonceType;
 use App\Repository\AdRepository;
-use Doctrine\Common\Persistence\ObjectManager;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Doctrine\Common\Persistence\ObjectManager;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 class AdController extends Controller
 {
@@ -29,6 +32,7 @@ class AdController extends Controller
      * create ad
      *
      * @Route("/ads/new", name="ads_create")
+     * @IsGranted("ROLE_USER")
      *
      * @return Response
      */
@@ -67,6 +71,7 @@ class AdController extends Controller
     /**
      * edit ad
      * @Route("ads/{slug}/edit", name="ads_edit")
+     * @Security("is_granted('ROLE_USER') and user === ad.getAuthor()", message="Cette annonce ne vous appartient pas")
      * 
      * @return Response
      */
@@ -112,6 +117,27 @@ class AdController extends Controller
         return $this->render('ad/show.html.twig', [
             "ad" => $ad,
         ]);
+    }
+
+    /**
+     * delete ad
+     * 
+     * @Route("/ads/{slug}/delete", name="ads_delete")
+     * @Security("is_granted('ROLE_USER') and user === ad.getAuthor()", message="Vous n'avez pas le droit d'accéder a cette ressource")
+     *
+
+     * @return Response
+     */
+    public function delete(Ad $ad, ObjectManager $manager) {
+        $manager->remove($ad);
+        $manager->flush();
+
+        $this->addFlash(
+            "success",
+            "L'annonce <strong>{$ad->getTitle()}</strong> a bien été supprimer"
+        );
+
+        return $this->redirectToRoute('ads_index');
     }
 
 }

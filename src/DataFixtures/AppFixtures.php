@@ -3,18 +3,20 @@
 namespace App\DataFixtures;
 
 use App\Entity\Ad;
-use Faker\Factory;
-use App\Entity\User;
 use App\Entity\Image;
+use App\Entity\Role;
+use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
+use Faker\Factory;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class AppFixtures extends Fixture
 {
     private $encoder;
 
-    public function __construct(UserPasswordEncoderInterface $encoder) {
+    public function __construct(UserPasswordEncoderInterface $encoder)
+    {
         $this->encoder = $encoder;
     }
 
@@ -22,36 +24,52 @@ class AppFixtures extends Fixture
     {
         $faker = Factory::create('fr-FR');
 
-            //create user
+        $adminRole = new Role();
+        $adminRole->setTitle('ROLE_ADMIN');
+        $manager->persist($adminRole);
 
-            $users = [];
+        $adminUser = new User();
+        $adminUser->setFirstName('aurelien')
+            ->setLastName('martin')
+            ->setEmail('email@email.com')
+            ->setHash($this->encoder->encodePassword($adminUser, 'password'))
+            ->setPicture('https://placehold.it/64x64')
+            ->setIntroduction($faker->sentence())
+            ->setDescription('<p>' . join('</p><p>', $faker->paragraphs(3)) . '</p>')
+            ->addUserRole($adminRole);
 
-            for($i = 0; $i < 10; $i++) {
-                $user = new User();
+        $manager->persist($adminUser);
 
-                $pictureId = $faker->numberBetween(1,99) . '.jpg';
-                $picture = 'https://randomuser.me/api/portraits/men/' . $pictureId;
+        //create user
 
-                $hash = $this->encoder->encodePassword($user, 'password');
+        $users = [];
 
-                $user->setFirstname($faker->firstname('male'))
-                    ->setLastName($faker->lastname('male'))
-                    ->setEmail($faker->email('male'))
-                    ->setIntroduction($faker->sentence())
-                    ->setDescription('<p>' . join('</p><p>', $faker->paragraphs(3)) . '</p>')
-                    ->setHash($hash)
-                    ->setPicture($picture);
+        for ($i = 0; $i < 10; $i++) {
+            $user = new User();
 
-                    $manager->persist($user);
-                    $users[] = $user;
-            }
+            $pictureId = $faker->numberBetween(1, 99) . '.jpg';
+            $picture = 'https://randomuser.me/api/portraits/men/' . $pictureId;
+
+            $hash = $this->encoder->encodePassword($user, 'password');
+
+            $user->setFirstname($faker->firstname('male'))
+                ->setLastName($faker->lastname('male'))
+                ->setEmail($faker->email('male'))
+                ->setIntroduction($faker->sentence())
+                ->setDescription('<p>' . join('</p><p>', $faker->paragraphs(3)) . '</p>')
+                ->setHash($hash)
+                ->setPicture($picture);
+
+            $manager->persist($user);
+            $users[] = $user;
+        }
 
         //create Ad
-        for($i=0; $i < 20 ; $i++) {
+        for ($i = 0; $i < 20; $i++) {
             $ad = new Ad();
 
             $title = $faker->sentence();
-            $coverImage = $faker->imageUrl(1000,350);
+            $coverImage = $faker->imageUrl(1000, 350);
             $introduction = $faker->paragraph(2);
             $content = '<p>' . join('</p><p>', $faker->paragraphs(5)) . '</p>';
 
@@ -65,18 +83,17 @@ class AppFixtures extends Fixture
                 ->setRooms(mt_rand(1, 5))
                 ->setAuthor($user);
 
-                for ($j = 1; $j <= mt_rand(2, 5); $j++) {
-                    $image = new Image();
+            for ($j = 1; $j <= mt_rand(2, 5); $j++) {
+                $image = new Image();
 
-                    $image->setUrl($faker->imageUrl())
-                        ->setCaption($faker->sentence())
-                        ->setAd($ad);
+                $image->setUrl($faker->imageUrl())
+                    ->setCaption($faker->sentence())
+                    ->setAd($ad);
 
-                        $manager->persist($image);
-                }
+                $manager->persist($image);
+            }
 
-                $manager->persist($ad);
-
+            $manager->persist($ad);
 
         }
         // $product = new Product();
