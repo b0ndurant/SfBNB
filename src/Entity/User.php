@@ -53,6 +53,10 @@ class User implements UserInterface
     private $picture;
 
     /**
+     * @Assert\Length(
+     * min=8,
+     * minMessage="Votre mot de passe doit faire au moins 8 caractères !")
+     * 
      * @ORM\Column(type="string", length=255)
      */
     private $hash;
@@ -92,6 +96,11 @@ class User implements UserInterface
      * @ORM\ManyToMany(targetEntity="App\Entity\Role", mappedBy="users")
      */
     private $userRoles;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $resetToken;
 
     public function getFullName() {
         return "{$this->firstName} {$this->lastName}";
@@ -302,6 +311,18 @@ class User implements UserInterface
             $this->userRoles->removeElement($userRole);
             $userRole->removeUser($this);
         }
+
+        return $this;
+    }
+
+    public function getResetToken(): ?string
+    {
+        return $this->resetToken;
+    }
+
+    public function setResetToken(?string $resetToken): self
+    {
+        $this->resetToken = $resetToken;
 
         return $this;
     }
