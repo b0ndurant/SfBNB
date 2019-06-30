@@ -4,6 +4,8 @@
     - Inscription
 {% endblock %}
 
+{% form_theme form _self %}
+
 {% block body %}
     <div class="container">
         <h1>Inscrivez vous sur notre site !</h1>
@@ -13,4 +15,61 @@
         <button class="btn btn-success" type="submit">Confirmez l'inscription</button>
         {{ form_end(form) }}
     </div>
+{% endblock %}
+
+{% block _registration_hash_row %}
+    <div class="form-group">
+        {{ form_label(form)}}
+        {{ form_widget(form, {'attr': {'class': 'input_password'} })}}
+        <span class="progress-bar_pw"></span>
+    </div>
+{% endblock %}
+
+{% block _registration_passwordConfirm_row %}
+    <div class="form-group">
+        {{ form_label(form)}}
+        {{ form_widget(form, {'attr': {'class': 'input_passwordConfirm'}})}}
+        <span class="progress-bar_pwc"></span>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        const changeText = function (el, text, color) {
+            el.text(text).css('color', color);
+        };
+
+        // check difficult password
+
+        $('.input_password').keyup(function () {
+            let len = this.value.length;
+            const pbText = $('.progress-bar_pw');
+
+            if (len === 0) {
+                $(this).css('border-color', '#2F96EF');
+                changeText(pbText, null, null);
+            } else if (len > 0 && len <= 4) {
+                $(this).css('border-color', '#FF4B47');
+                changeText(pbText, 'Sécurité : facile', '#FF4B47');
+            } else if (len > 4 && len <= 8) {
+                $(this).css('border-color', '#F9AE35');
+                changeText(pbText, 'Sécurité : moyen', '#F9AE35');
+            } else {
+                $(this).css('border-color', '#2DAF7D');
+                changeText(pbText, 'Sécurité :  difficile', '#2DAF7D');
+            }
+        })
+
+        // check same password confirm
+        $('.input_passwordConfirm, .input_password').keyup(function () {
+            if ($('.input_passwordConfirm').val() === $('.input_password').val()) {
+                $('.input_passwordConfirm').css('border-color', '#2DAF7D');
+                changeText($('.progress-bar_pwc'), 'Mot de passe identique', '#2DAF7D');
+                console.log('ok')
+            } else {
+                $('.input_passwordConfirm').css('border-color', '#FF4B47');
+                changeText($('.progress-bar_pwc'), 'Mot de passe non identique', '#FF4B47');
+            }
+        })
+    </script>
 {% endblock %}
