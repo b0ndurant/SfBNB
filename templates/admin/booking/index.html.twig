@@ -20,7 +20,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for booking in bookings %}
+                {% for booking in paginator.data %}
                     <tr>
                         <td>{{ booking.id }}</td>
                         <td>{{ booking.createdAt | date('d/m/Y H:i') }}</td>
@@ -29,7 +29,8 @@
                             {{ booking.booker.fullname }}</td>
                         <td>{{ booking.ad.title }}</td>
                         <td class="text-center">{{ booking.duration }}</td>
-                        <td class="text-center">{{ booking.amount }} &euro;</td>
+                        <td class="text-center">{{ booking.amount }}
+                            &euro;</td>
                         <td>
                             <a class="btn btn-primary" href="{{ path('admin_booking_edit', {'id': booking.id}) }}">
                                 <i class="fas fa-edit"></i>
@@ -42,5 +43,6 @@
                 {% endfor %}
             </tbody>
         </table>
+        {{ paginator.display() }}
     </div>
 {% endblock %}
