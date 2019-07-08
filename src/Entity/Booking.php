@@ -35,14 +35,18 @@ class Booking
     /**
      * @ORM\Column(type="datetime")
      * @Assert\Date(message="La date d'arrivée doit etre au bon format")
-     * @Assert\GreaterThan("today", message="La date d'arrivée doit être supérieure à la date d'aujourd'hui !")
+     * @Assert\GreaterThan("today",
+     *  message="La date d'arrivée doit être supérieure à la date d'aujourd'hui !",
+     * groups={"front"})
      */
     private $startDate;
 
     /**
      * @ORM\Column(type="datetime")
      * @Assert\Date(message="La date de départ doit etre au bon format")
-     * @Assert\GreaterThan(propertyPath="startDate", message="La date de départ doit être supérieure à la date d'arrivée !")
+     * @Assert\GreaterThan(
+     * propertyPath="startDate",
+     *  message="La date de départ doit être supérieure à la date d'arrivée !")
      */
     private $endDate;
 
@@ -63,6 +67,7 @@ class Booking
 
     /**
      * @ORM\PrePersist 
+     * @ORM\PreUpdate
      *
      * @return void
      */

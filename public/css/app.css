@@ -13,6 +13,12 @@
     text-shadow: 3px 3px 3px rgba(0,0,0,0.5)
 }
 
+.add-title .btn {
+    margin-top: 2em;
+    font-size: 1.5em;
+    line-height: 1.5em;
+}
+
 .carousel-caption, .carousel-caption h5 {
     color: white;
     text-shadow: 3px 3px 3px rgba(0,0,0,0.5);
@@ -37,4 +43,19 @@
 .datepicker table tr td.disabled, .datepicker table tr td.disabled:hover {
     color: red !important;
     text-decoration: line-through;
+}
+
+.rating i {
+    color: goldenrod;
+}
+
+.alert a {
+    text-decoration: none;
+}
+
+/*-----------------Admin ------------------*/
+
+.avatar-micro {
+    max-width: 20px;
+    max-height: 20px;
 }

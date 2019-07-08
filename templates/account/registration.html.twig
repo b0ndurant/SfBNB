@@ -4,44 +4,61 @@
     - Inscription
 {% endblock %}
 
-{% form_theme form _self %}
-
 {% block body %}
     <div class="container">
-        <h1>Inscrivez vous sur notre site !</h1>
-
+        <h1 class="my-5">Inscrivez vous sur notre site !</h1>
         {{ form_start(form) }}
-        {{ form_widget(form) }}
-        <button class="btn btn-success" type="submit">Confirmez l'inscription</button>
+        <div class="row">
+            <div class="col">
+                <div class="alert alert-light">
+                    <h2 class="alert-heading">Informations générale</h2>
+                    <hr>
+                    {{ form_row(form.firstName) }}
+                    {{ form_row(form.lastName) }}
+                    {{ form_row(form.email) }}
+                    {{ form_row(form.picture) }}
+                </div>
+                <div class="alert alert-light">
+                    <h2 class="alert-heading">Mot de passe</h2>
+                    <hr>
+                    <div class="form-group">
+                        {{ form_row(form.hash) }}
+                        <span class="progress-bar_pw"></span>
+                    </div>
+                    <div class="form-group">
+                        {{ form_row(form.passwordConfirm) }}
+                        <span class="progress-bar_pwc"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="alert alert-light">
+                    <h2 class="alert-heading">Détails</h2>
+                    <hr>
+                    {{ form_row(form.introduction) }}
+                    {{ form_row(form.description) }}
+                    <hr>
+                    <p>Si vous avez terminé vos modifications, vous pouvez les sauvegarder</p>
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-check"></i>
+                        Confirmez l'inscription</button>
+                </div>
+            </div>
+        </div>
         {{ form_end(form) }}
-    </div>
-{% endblock %}
 
-{% block _registration_hash_row %}
-    <div class="form-group">
-        {{ form_label(form)}}
-        {{ form_widget(form, {'attr': {'class': 'input_password'} })}}
-        <span class="progress-bar_pw"></span>
-    </div>
-{% endblock %}
-
-{% block _registration_passwordConfirm_row %}
-    <div class="form-group">
-        {{ form_label(form)}}
-        {{ form_widget(form, {'attr': {'class': 'input_passwordConfirm'}})}}
-        <span class="progress-bar_pwc"></span>
     </div>
 {% endblock %}
 
 {% block javascripts %}
     <script>
         const changeText = function (el, text, color) {
-            el.text(text).css('color', color);
+            el.html(text).css('color', color);
         };
 
         // check difficult password
 
-        $('.input_password').keyup(function () {
+        $('#registration_hash').keyup(function () {
             let len = this.value.length;
             const pbText = $('.progress-bar_pw');
 
@@ -61,13 +78,13 @@
         })
 
         // check same password confirm
-        $('.input_passwordConfirm, .input_password').keyup(function () {
-            if ($('.input_passwordConfirm').val() === $('.input_password').val()) {
-                $('.input_passwordConfirm').css('border-color', '#2DAF7D');
-                changeText($('.progress-bar_pwc'), 'Mot de passe identique', '#2DAF7D');
+        $('#registration_passwordConfirm, #registration_hash').keyup(function () {
+            if ($('#registration_passwordConfirm').val() === $('#registration_hash').val()) {
+                $('#registration_passwordConfirm').css('border-color', '#2DAF7D');
+                changeText($('.progress-bar_pwc'), '<i class="fas fa-check"></i> Mot de passe identique', '#2DAF7D');
                 console.log('ok')
             } else {
-                $('.input_passwordConfirm').css('border-color', '#FF4B47');
+                $('#registration_passwordConfirm').css('border-color', '#FF4B47');
                 changeText($('.progress-bar_pwc'), 'Mot de passe non identique', '#FF4B47');
             }
         })

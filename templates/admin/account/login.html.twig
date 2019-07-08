@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <meta content="ie=edge" http-equiv="X-UA-Compatible">
+        <link href="/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.css" rel="stylesheet">
+        <title>Connexion a l'administration</title>
+        <style>
+            body {
+                display: flex;
+                justify-content: center;
+                height: 100vh;
+            }
+
+            .card {
+                margin-top: 10%;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-header">
+                    <h4 class="card-title text-center">
+                        <i class="fas fa-lock"></i>
+                        Connexion a l'administration
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if hasError %}
+                        <div class="alert alert-warning">
+                            <p>Les informations que vous avez fournies ne sont pas bonnes !</p>
+                        </div>
+                    {% endif %}
+
+                    <form method="POST">
+                        <div class="form-group">
+                            <label for="_username">Email</label><input class="form-control" name="_username" placeholder="Adresse email ..." type="text" value={{ username }}>
+                        </div>
+                        <div class="form-group">
+                            <label for="_password">Mot de passe</label><input class="form-control" name="_password" placeholder="Mot de passe ..." type="password">
+                            <p class="mt-2"><a href="{{ path('account_forgetPassword') }}" class="text-dark">Mot de passe oublié</a></p>
+                        </div>
+                        <div class="text-center">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-lock-open"></i>
+                                Connexion !
+                            </button>
+                            <a href="{{ path('homepage') }}" class="btn btn-link">
+                                <i class="fas fa-arrow-circle-left"></i>
+                                Retour sur le site
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

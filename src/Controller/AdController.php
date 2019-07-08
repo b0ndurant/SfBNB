@@ -21,7 +21,9 @@ class AdController extends AbstractController
      */
     public function index(AdRepository $repo)
     {
-        $ads = $repo->findAll();
+        $ads = $repo->adsWithComment();
+
+        //dd($repo->adsWithComment());
 
         return $this->render('ad/index.html.twig', [
             'ads' => $ads,
@@ -112,8 +114,9 @@ class AdController extends AbstractController
      *
      * @return Response
      */
-    public function show(Ad $ad)
+    public function show(Ad $ad, Adrepository $repo)
     {
+        //$ad = $repo->test($ok);
         return $this->render('ad/show.html.twig', [
             "ad" => $ad,
         ]);
