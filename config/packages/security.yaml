@@ -23,7 +23,7 @@ security:
             form_login:
                 login_path: admin_account_login
                 check_path: admin_account_login
-                default_target_path: admin_ads_index
+                default_target_path: admin_dashboard
 
             logout: 
                 path: admin_account_logout

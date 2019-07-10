@@ -19,6 +19,19 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
+    public function findBestUsers($limit = 2) {
+        return $this->createQueryBuilder('u')
+        ->select('u as user, AVG(c.rating) as avgRatings, COUNT(c) as countComments')
+        ->join('u.ads', 'a')
+        ->join('a.comments', 'c')
+        ->groupBy('user')
+        ->having('countComments > 3')
+        ->orderBy('avgRatings', 'DESC')
+        ->setMaxResults($limit)
+        ->getQuery()
+        ->getResult();
+    }
+
     // /**
     //  * @return User[] Returns an array of User objects
     //  */

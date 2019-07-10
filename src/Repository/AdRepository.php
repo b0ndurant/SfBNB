@@ -19,23 +19,16 @@ class AdRepository extends ServiceEntityRepository
         parent::__construct($registry, Ad::class);
     }
 
-    public function adsWithComment() {
+    public function findBestAds($limit = 3) {
         return $this->createQueryBuilder('a')
-        ->Leftjoin('a.comments','c')
-        ->select('a ,c')
+        ->select('a as ad, AVG(c.rating) as avgRatings, COUNT(c) as countComments')
+        ->join('a.comments', 'c')
+        ->groupBy('a')
+        ->having('countComments > 1')
+        ->orderby('avgRatings', 'DESC')
+        ->setMaxResults($limit)
         ->getQuery()
         ->getResult();
-    }
-
-    public function test($id) {
-        return $this->createQueryBuilder('a')
-        ->leftJoin('a.comments','c')
-        ->leftJoin('c.author', 'u')
-        ->andWhere('a.id = :id')
-        ->setParameter('id', $id)
-        ->select('a , c, u')
-        ->getQuery()
-        ->getOneOrNullResult();
     }
 
     // /**
