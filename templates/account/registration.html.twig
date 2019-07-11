@@ -82,7 +82,6 @@
             if ($('#registration_passwordConfirm').val() === $('#registration_hash').val()) {
                 $('#registration_passwordConfirm').css('border-color', '#2DAF7D');
                 changeText($('.progress-bar_pwc'), '<i class="fas fa-check"></i> Mot de passe identique', '#2DAF7D');
-                console.log('ok')
             } else {
                 $('#registration_passwordConfirm').css('border-color', '#FF4B47');
                 changeText($('.progress-bar_pwc'), 'Mot de passe non identique', '#FF4B47');
