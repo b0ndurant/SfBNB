@@ -13,19 +13,21 @@ class StatsService
         $this->manager = $manager;
     }
 
-    public function getAdsStats($direction = 'ASC') {
+    public function getAdsStats($direction = 'ASC')
+    {
         return $this->manager->createQuery(
-            'SELECT avg(c.rating) as note, a.title, a.id, u.firstName, u.lastName, u.picture 
+            'SELECT avg(c.rating) as note, a.title, a.id, u.firstName, u.lastName, u.picture
             FROM App\Entity\Comment c
             JOIN c.ad a
             JOIN a.author u
             GROUP BY a
             ORDER BY note ' . $direction
         )->setMaxResults(5)
-        ->getResult();
+            ->getResult();
     }
 
-    public function getStats() {
+    public function getStats()
+    {
         $ads = $this->getAdsCount();
         $bookings = $this->getBookingsCount();
         $comments = $this->getCommentsCount();
@@ -52,5 +54,10 @@ class StatsService
     public function getUsersCount()
     {
         return $this->manager->createQuery('SELECT count(u) FROM \App\Entity\User u')->getSingleScalarResult();
+    }
+
+    public function getCountVisitor()
+    {
+        return $this->manager->createQuery('SELECT count(v) FROM \App\Entity\Visitor v')->getSingleScalarResult();
     }
 }

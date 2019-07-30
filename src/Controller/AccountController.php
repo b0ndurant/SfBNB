@@ -2,22 +2,22 @@
 
 namespace App\Controller;
 
+use App\Entity\PasswordUpdate;
 use App\Entity\User;
 use App\Form\AccountType;
-use App\Entity\PasswordUpdate;
-use App\Form\RegistrationType;
 use App\Form\PasswordUpdateType;
+use App\Form\RegistrationType;
 use App\Repository\UserRepository;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class AccountController extends AbstractController
 {
@@ -57,22 +57,38 @@ class AccountController extends AbstractController
     public function register(Request $request, ObjectManager $manager, UserPasswordEncoderInterface $encoder, \Swift_Mailer $mailer)
     {
         $user = new User();
-        
-        $form = $this->createForm(RegistrationType::class, $user);
-        
-        $form->handleRequest($request);
-        
-        if ($form->IsSubmitted() && $form->IsValid()) {
 
-            $hash = $encoder->encodePassword($user, $user->getHash());
+        $form = $this->createForm(RegistrationType::class, $user);
+
+        $form->handleRequest($request);
+
+        if ($form->IsSubmitted() && $form->IsValid()) {
+            $password = $user->getHash();
+            $hash = $encoder->encodePassword($user, $password);
             $user->setHash($hash);
 
             $manager->persist($user);
             $manager->flush();
 
+            $message = (new \Swift_Message())
+                ->setSubject('SfBNB - Bienvenue !')
+                ->setFrom(['email@email.com' => 'SfBNB'])
+                ->setTo($user->getEmail())
+                ->setBody(
+                    $this->renderView('email/welcome.html.twig', [
+                        'email' => $user->getEmail(),
+                        'fullname' => $user->getFullName(),
+                        'password' => $password,
+                    ]
+                    ),
+                    'text/html'
+                );
+
+            $mailer->send($message);
+
             $this->addFlash(
                 'success',
-                "Votre compte a bien été créer, vous pouvez maintenant vous connecter !"
+                "Votre compte a bien été créer, un email vous a été envoyé et vous pouvez maintenant vous connecter !"
             );
 
             return $this->redirectToRoute('account_login');
@@ -211,14 +227,14 @@ class AccountController extends AbstractController
             $url = $this->generateUrl('app_reset_password', array('resetToken' => $token), UrlGeneratorInterface::ABSOLUTE_URL);
 
             $message = (new \Swift_Message())
-                ->setSubject('SfBNB - Réinitialisé mot de passe')
-                ->setFrom(['email@email.com' => 'SfBNB'])
+                ->setSubject('SfBNB - Réinitialisation mot de passe')
+                ->setFrom(['test@test.com' => 'SfBNB'])
                 ->setTo($user->getEmail())
                 ->setBody(
-                    $this->renderView('account/email_resetting.html.twig', [
+                    $this->renderView('email/email_resetting.html.twig', [
                         'url' => $url,
                         'fullname' => $user->getFullName(),
-                        ]
+                    ]
                     ),
                     'text/html'
                 );
@@ -281,12 +297,13 @@ class AccountController extends AbstractController
 
     /**
      * show the list of reserrvations made by user
-     * 
+     *
      * @Route("/account/bookings", name="account_bookings")
      *
      * @return Response
      */
-    public function bookings() {
+    public function bookings()
+    {
         return $this->render('account/bookings.html.twig');
     }
 }
